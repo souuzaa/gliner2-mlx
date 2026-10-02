@@ -97,6 +97,7 @@ language:
 - en
 tags:
 - mlx
+- apple-silicon
 - gliner2
 - deberta-v2
 - text-classification
@@ -107,7 +108,21 @@ tags:
 
 # {repo}
 
-[{base}](https://huggingface.co/{base}) converted to MLX ({variant}) for Apple Silicon.
+**MLX-compatible** version of [{base}](https://huggingface.co/{base}) ({variant}), for Macs with Apple Silicon
+(M1/M2/M3/M4 and later).
+
+This repo runs natively on [MLX](https://github.com/ml-explore/mlx), Apple's machine-learning framework, on the Mac GPU
+with unified memory. It needs no PyTorch: install `mlx`, `numpy` and `tokenizers`, and the bundled `gliner2_mlx.py`
+loads the weights and exposes the same `classify_text` / `extract_entities` API as `gliner2`. Answers match the
+original PyTorch model (fp32 parity ~1e-6). On an Apple M4, this runs about 2× faster than PyTorch `gliner2` on the
+same Mac (CPU or MPS) and uses far less memory.
+
+| | PyTorch `gliner2` (MPS) | MLX bf16 | MLX 4-bit |
+|---|---|---|---|
+| Median latency (Apple M4, batch 1) | 215 ms | 105 ms | 99 ms |
+| Peak process RAM | 4.39 GB | 1.23 GB | 0.63 GB |
+
+Converter, parity check and benchmarks: [souuzaa/gliner2-mlx](https://github.com/souuzaa/gliner2-mlx).
 
 GLiNER2.5-Decide is a 340M-parameter schema-driven classifier (DeBERTa-v3-large encoder + GLiNER2 heads):
 pass any label set at call time and get a decision in a single forward pass, no generated tokens.
