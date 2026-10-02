@@ -1,0 +1,6 @@
+mlx>=0.29
+numpy
+tokenizers
+huggingface_hub
+# optional, only for verify_parity.py:
+# gliner2[local]==2.0.0
