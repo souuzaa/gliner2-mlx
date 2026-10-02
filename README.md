@@ -5,6 +5,30 @@ checkpoints with a DeBERTa-v3 encoder) into an MLX repo laid out like
 [mlx-community/clef-flash-4bit](https://huggingface.co/mlx-community/clef-flash-4bit): quantized weights, the original
 tokenizer, a torch-free loader (`gliner2_mlx.py`) and a model card.
 
+## Converted models on Hugging Face
+
+| Model | Size | Accuracy (fast-decisions dev) | Same answer as fp32 |
+|---|---|---|---|
+| [souuzaa/GLiNER2.5-Decide-4bit](https://huggingface.co/souuzaa/GLiNER2.5-Decide-4bit) | 350 MB | 63.7% | 97.2% |
+| [souuzaa/GLiNER2.5-Decide-8bit](https://huggingface.co/souuzaa/GLiNER2.5-Decide-8bit) | 567 MB | 63.8% | 99.6% |
+| [souuzaa/GLiNER2.5-Decide-bf16](https://huggingface.co/souuzaa/GLiNER2.5-Decide-bf16) | 973 MB | 63.7% | 99.5% |
+
+The fp32 original scores 63.7% on the same split. Load any of them without cloning this repo:
+
+```python
+import sys
+from huggingface_hub import snapshot_download
+
+path = snapshot_download("souuzaa/GLiNER2.5-Decide-4bit")
+sys.path.insert(0, path)
+import gliner2_mlx
+
+model = gliner2_mlx.load(path)
+model.classify_text("Can I get that charge refunded?", {"intent": ["refund_request", "order_status", "other"]})
+```
+
+## Files
+
 | File | Purpose |
 |---|---|
 | `gliner2_mlx.py` | MLX model (DeBERTa-v2 encoder + GLiNER2 heads), gliner2-compatible pre/post-processing, `load()` |
